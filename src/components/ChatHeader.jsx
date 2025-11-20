@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
-import { Moon, Sun, Music } from 'lucide-react';
+import { Moon, Sun, Music, Trash2 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
-export default function ChatHeader({ botName, avatarUrl }) {
+export default function ChatHeader({ botName, avatarUrl, onClearChat }) {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -43,20 +43,35 @@ export default function ChatHeader({ botName, avatarUrl }) {
             </div>
           </div>
 
-          {/* Right: Theme Toggle */}
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={toggleTheme}
-            className="p-2.5 rounded-full bg-spotify-gray-medium dark:bg-spotify-gray-medium/50 hover:bg-spotify-green/20 transition-colors"
-            aria-label="Toggle theme"
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-5 h-5 text-spotify-green" />
-            ) : (
-              <Moon className="w-5 h-5 text-spotify-green" />
-            )}
-          </motion.button>
+          {/* Right: Clear Chat, Theme Toggle */}
+          <div className="flex items-center gap-2">
+            {/* Clear Chat Button */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={onClearChat}
+              className="p-2.5 rounded-full bg-spotify-gray-medium dark:bg-spotify-gray-medium/50 hover:bg-red-500/20 transition-colors"
+              aria-label="Clear chat"
+              title="Clear all messages"
+            >
+              <Trash2 className="w-5 h-5 text-red-400 hover:text-red-300" />
+            </motion.button>
+
+            {/* Theme Toggle */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={toggleTheme}
+              className="p-2.5 rounded-full bg-spotify-gray-medium dark:bg-spotify-gray-medium/50 hover:bg-spotify-green/20 transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5 text-spotify-green" />
+              ) : (
+                <Moon className="w-5 h-5 text-spotify-green" />
+              )}
+            </motion.button>
+          </div>
         </div>
       </div>
     </motion.header>

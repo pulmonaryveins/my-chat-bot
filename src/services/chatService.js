@@ -22,7 +22,7 @@ export async function sendMessage(userMessage, conversationHistory = []) {
             role: 'system',
             content: buildSystemPrompt()
           },
-          ...conversationHistory.slice(-4).map(msg => ({
+          ...conversationHistory.slice(-5).map(msg => ({
             role: msg.role,
             content: msg.content
           })),
