@@ -1,0 +1,21 @@
+# Environment variables
+.env
+.env.local
+
+# Firebase config (if it contains keys)
+src/config/firebase.js
+
+# Dependencies
+node_modules/
+
+# Build files
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
