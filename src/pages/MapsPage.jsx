@@ -5,6 +5,8 @@ import { MapPin, Plus, X, Edit, Trash2, Navigation, Calendar, Search, Loader2 } 
 import Layout from '../components/Layout';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { db } from '../config/firebase';
+import { collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
 
 // Fix Leaflet default marker icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -79,6 +81,7 @@ export default function MapsPage() {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [flyToLocation, setFlyToLocation] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const searchTimeoutRef = useRef(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -86,20 +89,24 @@ export default function MapsPage() {
     message: '',
   });
 
-  // Load pins from localStorage
+  // Load pins from Firestore with real-time updates
   useEffect(() => {
-    const savedPins = localStorage.getItem('mapPins');
-    if (savedPins) {
-      setPins(JSON.parse(savedPins));
-    }
-  }, []);
+    const q = query(collection(db, 'mapPins'), orderBy('createdAt', 'desc'));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const loadedPins = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setPins(loadedPins);
+      setIsLoading(false);
+    }, (error) => {
+      console.error('Error loading pins:', error);
+      setIsLoading(false);
+    });
 
-  // Save pins to localStorage
-  useEffect(() => {
-    if (pins.length > 0) {
-      localStorage.setItem('mapPins', JSON.stringify(pins));
-    }
-  }, [pins]);
+    return () => unsubscribe();
+  }, []);
 
   // Search location using Nominatim (OpenStreetMap)
   const searchLocation = async (query) => {
@@ -162,27 +169,40 @@ export default function MapsPage() {
     setIsAddingMarker(false);
   };
 
-  const handleAddPin = (e) => {
+  const handleAddPin = async (e) => {
     e.preventDefault();
     if (!tempLocation || !formData.title.trim()) return;
 
-    const newPin = {
-      id: Date.now(),
-      ...tempLocation,
-      ...formData,
-      createdAt: new Date().toISOString(),
-      radius: 500, // 500 meter radius
-    };
+    try {
+      const newPin = {
+        lat: tempLocation.lat,
+        lng: tempLocation.lng,
+        title: formData.title,
+        date: formData.date,
+        message: formData.message,
+        createdAt: new Date().toISOString(),
+        radius: 500,
+      };
 
-    setPins([...pins, newPin]);
-    setShowAddModal(false);
-    setFormData({ title: '', date: new Date().toISOString().split('T')[0], message: '' });
-    setTempLocation(null);
+      await addDoc(collection(db, 'mapPins'), newPin);
+      
+      setShowAddModal(false);
+      setFormData({ title: '', date: new Date().toISOString().split('T')[0], message: '' });
+      setTempLocation(null);
+    } catch (error) {
+      console.error('Error adding pin:', error);
+      alert('Failed to add place. Please try again.');
+    }
   };
 
-  const handleDeletePin = (id) => {
-    setPins(pins.filter(pin => pin.id !== id));
-    setSelectedPin(null);
+  const handleDeletePin = async (id) => {
+    try {
+      await deleteDoc(doc(db, 'mapPins', id));
+      setSelectedPin(null);
+    } catch (error) {
+      console.error('Error deleting pin:', error);
+      alert('Failed to delete place. Please try again.');
+    }
   };
 
   const handleEditPin = (pin) => {
@@ -201,6 +221,19 @@ export default function MapsPage() {
     .sort((a, b) => new Date(a.date) - new Date(b.date))
     .map(pin => [pin.lat, pin.lng]) : [];
 
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 text-spotify-green animate-spin mx-auto mb-4" />
+            <p className="text-gray-600 dark:text-gray-400">Loading your journey...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -214,7 +247,7 @@ export default function MapsPage() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <MapPin className="w-10 h-10 text-spotify-green" />
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white">
-              Our Journey
+              Our Map of Memories
             </h1>
           </div>
           <p className="text-lg text-spotify-gray-light">
@@ -284,7 +317,7 @@ export default function MapsPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search for a place in Philippines... (e.g., Ayala Center Cebu)"
+              placeholder="Search for a place in Cebu... (e.g., Ayala Center Cebu)"
               className="w-full pl-12 pr-12 py-4 rounded-2xl border-2 border-gray-200 dark:border-spotify-gray-dark bg-white dark:bg-spotify-gray-medium text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-spotify-green focus:border-transparent outline-none transition-all shadow-lg"
             />
             {isSearching && (
