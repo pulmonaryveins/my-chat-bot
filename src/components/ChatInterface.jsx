@@ -7,6 +7,7 @@ import { sendMessage } from '../services/chatService';
 import { personality } from '../config/personality';
 import { db } from '../config/firebase';
 import { collection, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
+import GridBackground from './GridBackground';
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState([]);
@@ -75,16 +76,16 @@ export default function ChatInterface() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
+      <GridBackground className="flex items-center justify-center h-screen">
         <div className="text-gray-500 text-sm">Loading messages...</div>
-      </div>
+      </GridBackground>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <GridBackground className="flex flex-col h-screen">
       {/* Header - Fully Responsive */}
-      <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
+      <header className="bg-white/80 dark:bg-spotify-gray-dark/80 backdrop-blur-sm border-b border-gray-200 dark:border-spotify-gray-medium shadow-sm sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-6 py-3 md:py-4">
           <div className="flex items-center gap-2.5 sm:gap-3">
             {/* Avatar */}
@@ -129,11 +130,11 @@ export default function ChatInterface() {
       </main>
 
       {/* Input Area - Fully Responsive */}
-      <footer className="bg-white border-t border-gray-200 shadow-lg sticky bottom-0">
+      <footer className="bg-white/80 dark:bg-spotify-gray-dark/80 backdrop-blur-sm border-t border-gray-200 dark:border-spotify-gray-medium shadow-lg sticky bottom-0">
         <div className="max-w-5xl mx-auto px-3 sm:px-4 md:px-6 py-3 md:py-4">
           <InputArea onSend={handleSend} disabled={isTyping} />
         </div>
       </footer>
-    </div>
+    </GridBackground>
   );
 }

@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Polyline, Circle, useMapEvents, useMap } from 'react-leaflet';
 import { MapPin, Plus, X, Edit, Trash2, Navigation, Calendar, Search, Loader2 } from 'lucide-react';
 import Layout from '../components/Layout';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { db } from '../config/firebase';
-import { collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc } from 'firebase/firestore';
 
 // Fix Leaflet default marker icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -82,6 +82,7 @@ export default function MapsPage() {
   const [isSearching, setIsSearching] = useState(false);
   const [flyToLocation, setFlyToLocation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [editingPinId, setEditingPinId] = useState(null);
   const searchTimeoutRef = useRef(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -174,28 +175,45 @@ export default function MapsPage() {
     if (!tempLocation || !formData.title.trim()) return;
 
     try {
-      const newPin = {
-        lat: tempLocation.lat,
-        lng: tempLocation.lng,
-        title: formData.title,
-        date: formData.date,
-        message: formData.message,
-        createdAt: new Date().toISOString(),
-        radius: 500,
-      };
-
-      await addDoc(collection(db, 'mapPins'), newPin);
+      if (editingPinId) {
+        // Update existing pin
+        const pinRef = doc(db, 'mapPins', editingPinId);
+        await updateDoc(pinRef, {
+          lat: tempLocation.lat,
+          lng: tempLocation.lng,
+          title: formData.title,
+          date: formData.date,
+          message: formData.message,
+        });
+        setEditingPinId(null);
+      } else {
+        // Add new pin
+        const newPin = {
+          lat: tempLocation.lat,
+          lng: tempLocation.lng,
+          title: formData.title,
+          date: formData.date,
+          message: formData.message,
+          createdAt: new Date().toISOString(),
+          radius: 500,
+        };
+        await addDoc(collection(db, 'mapPins'), newPin);
+      }
       
       setShowAddModal(false);
       setFormData({ title: '', date: new Date().toISOString().split('T')[0], message: '' });
       setTempLocation(null);
     } catch (error) {
-      console.error('Error adding pin:', error);
-      alert('Failed to add place. Please try again.');
+      console.error('Error saving pin:', error);
+      alert('Failed to save place. Please try again.');
     }
   };
 
   const handleDeletePin = async (id) => {
+    if (!confirm('Are you sure you want to delete this place?')) {
+      return;
+    }
+
     try {
       await deleteDoc(doc(db, 'mapPins', id));
       setSelectedPin(null);
@@ -206,6 +224,7 @@ export default function MapsPage() {
   };
 
   const handleEditPin = (pin) => {
+    setEditingPinId(pin.id);
     setFormData({
       title: pin.title,
       date: pin.date,
@@ -213,7 +232,14 @@ export default function MapsPage() {
     });
     setTempLocation({ lat: pin.lat, lng: pin.lng });
     setShowAddModal(true);
-    handleDeletePin(pin.id);
+    setSelectedPin(null);
+  };
+
+  const handleCancelEdit = () => {
+    setShowAddModal(false);
+    setEditingPinId(null);
+    setFormData({ title: '', date: new Date().toISOString().split('T')[0], message: '' });
+    setTempLocation(null);
   };
 
   // Generate routes (lines between pins in chronological order)
@@ -421,10 +447,9 @@ export default function MapsPage() {
               />
             )}
 
-            {/* Render markers with radius circles */}
+            {/* Render markers with radius circles - NO POPUPS */}
             {pins.map((pin) => (
               <motion.div key={pin.id}>
-                {/* Radius circle */}
                 <Circle
                   center={[pin.lat, pin.lng]}
                   radius={pin.radius || 500}
@@ -437,79 +462,122 @@ export default function MapsPage() {
                   }}
                 />
                 
-                {/* Marker */}
                 <Marker
                   position={[pin.lat, pin.lng]}
                   icon={customIcon}
                   eventHandlers={{
-                    click: () => setSelectedPin(pin),
+                    click: () => {
+                      setSelectedPin(pin);
+                      setFlyToLocation({ center: [pin.lat, pin.lng], zoom: 15 });
+                    },
                   }}
-                >
-                  <Popup
-                    className="custom-popup"
-                    closeButton={false}
-                    maxWidth={320}
-                  >
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="p-4"
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <h3 className="font-bold text-lg text-gray-900 pr-2 break-words">{pin.title}</h3>
-                        <button
-                          onClick={() => setSelectedPin(null)}
-                          className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
-                        >
-                          <X className="w-4 h-4 text-gray-500" />
-                        </button>
-                      </div>
-                      
-                      <div className="flex items-center gap-2 text-xs text-gray-600 mb-3 bg-gray-50 dark:bg-gray-800 px-3 py-2 rounded-lg">
-                        <Calendar className="w-4 h-4 text-spotify-green flex-shrink-0" />
-                        <span className="truncate">{new Date(pin.date).toLocaleDateString('en-US', {
-                          weekday: 'short',
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}</span>
-                      </div>
-                      
-                      {pin.message && (
-                        <div className="mb-4 max-h-32 overflow-y-auto custom-scrollbar">
-                          <p className="text-sm text-gray-700 leading-relaxed bg-spotify-green/5 p-3 rounded-lg border border-spotify-green/10 break-words whitespace-pre-wrap">
-                            {pin.message}
-                          </p>
-                        </div>
-                      )}
-                      
-                      <div className="flex gap-2 pt-2 border-t border-gray-200">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleEditPin(pin)}
-                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-500 text-white rounded-lg text-xs font-medium hover:bg-blue-600 transition-colors shadow-sm"
-                        >
-                          <Edit className="w-3.5 h-3.5" />
-                          Edit
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleDeletePin(pin.id)}
-                          className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-red-500 text-white rounded-lg text-xs font-medium hover:bg-red-600 transition-colors shadow-sm"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          Delete
-                        </motion.button>
-                      </div>
-                    </motion.div>
-                  </Popup>
-                </Marker>
+                />
               </motion.div>
             ))}
           </MapContainer>
         </motion.div>
+
+        {/* Improved Pin Details Modal */}
+        <AnimatePresence>
+          {selectedPin && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setSelectedPin(null)}
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              />
+              
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="bg-white dark:bg-spotify-gray-medium rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden border-2 border-gray-200 dark:border-spotify-gray-dark">
+                  {/* Header - Fixed */}
+                  <div className="bg-gradient-to-r from-spotify-green to-emerald-500 p-6 text-white">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-3 flex-1 pr-4">
+                        <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-sm">
+                          <MapPin className="w-6 h-6" />
+                        </div>
+                        <h2 className="text-2xl font-bold break-words">{selectedPin.title}</h2>
+                      </div>
+                      <button
+                        onClick={() => setSelectedPin(null)}
+                        className="p-2 hover:bg-white/20 rounded-full transition-colors flex-shrink-0"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 text-sm bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
+                      <Calendar className="w-4 h-4" />
+                      <span>{new Date(selectedPin.date).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}</span>
+                    </div>
+                  </div>
+
+                  {/* Content - Scrollable */}
+                  <div className="p-6 max-h-[50vh] overflow-y-auto custom-scrollbar">
+                    {selectedPin.message ? (
+                      <div className="space-y-4">
+                        <div>
+                          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+                            Memory
+                          </h3>
+                          <div className="bg-spotify-green/5 dark:bg-spotify-green/10 border border-spotify-green/20 rounded-2xl p-4">
+                            <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words">
+                              {selectedPin.message}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <p className="text-gray-400 dark:text-gray-500 italic">
+                          No message for this place yet
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Footer - Fixed */}
+                  <div className="border-t border-gray-200 dark:border-spotify-gray-dark p-4 bg-gray-50 dark:bg-spotify-gray-dark/50">
+                    <div className="flex gap-3">
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleEditPin(selectedPin)}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-500 text-white rounded-xl font-medium hover:bg-blue-600 transition-colors shadow-lg"
+                      >
+                        <Edit className="w-4 h-4" />
+                        Edit
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleDeletePin(selectedPin.id)}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-500 text-white rounded-xl font-medium hover:bg-red-600 transition-colors shadow-lg"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Delete
+                      </motion.button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
 
         {/* Pin List */}
         {pins.length > 0 && (
@@ -563,7 +631,7 @@ export default function MapsPage() {
           </motion.div>
         )}
 
-        {/* Add Pin Modal */}
+        {/* Add/Edit Pin Modal */}
         <AnimatePresence>
           {showAddModal && (
             <>
@@ -571,7 +639,7 @@ export default function MapsPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                onClick={() => setShowAddModal(false)}
+                onClick={handleCancelEdit}
                 className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
               />
               
@@ -581,6 +649,7 @@ export default function MapsPage() {
                 exit={{ scale: 0.9, opacity: 0, y: 20 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                 className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                onClick={(e) => e.stopPropagation()}
               >
                 <div className="bg-white dark:bg-spotify-gray-medium rounded-3xl shadow-2xl max-w-md w-full p-8 border border-gray-200 dark:border-spotify-gray-dark">
                   <div className="flex items-center justify-between mb-6">
@@ -589,11 +658,11 @@ export default function MapsPage() {
                         <MapPin className="w-7 h-7 text-spotify-green" />
                       </div>
                       <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        Add New Place
+                        {editingPinId ? 'Edit Place' : 'Add New Place'}
                       </h2>
                     </div>
                     <button
-                      onClick={() => setShowAddModal(false)}
+                      onClick={handleCancelEdit}
                       className="p-2 hover:bg-gray-100 dark:hover:bg-spotify-gray-dark rounded-full transition-colors"
                     >
                       <X className="w-5 h-5 text-gray-500" />
@@ -645,7 +714,7 @@ export default function MapsPage() {
                         type="button"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => setShowAddModal(false)}
+                        onClick={handleCancelEdit}
                         className="flex-1 px-5 py-3 rounded-xl bg-gray-200 dark:bg-spotify-gray-dark text-gray-900 dark:text-white font-semibold hover:bg-gray-300 dark:hover:bg-spotify-black transition-colors"
                       >
                         Cancel
@@ -657,7 +726,7 @@ export default function MapsPage() {
                         whileTap={{ scale: 0.98 }}
                         className="flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-spotify-green to-emerald-500 text-white font-semibold shadow-lg hover:shadow-spotify-green/50 transition-all"
                       >
-                        Add Place
+                        {editingPinId ? 'Update Place' : 'Add Place'}
                       </motion.button>
                     </div>
                   </form>
@@ -669,22 +738,6 @@ export default function MapsPage() {
       </div>
 
       <style>{`
-        .custom-popup .leaflet-popup-content-wrapper {
-          background: white;
-          border-radius: 1rem;
-          padding: 0;
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-          border: 1px solid #e5e7eb;
-        }
-        .custom-popup .leaflet-popup-content {
-          margin: 0;
-          width: 100% !important;
-          max-width: 320px;
-        }
-        .custom-popup .leaflet-popup-tip {
-          background: white;
-          border: 1px solid #e5e7eb;
-        }
         .custom-marker-icon {
           animation: markerBounce 0.6s ease-out;
         }
