@@ -1,43 +1,50 @@
+/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gift, Heart, Sparkles, Lock } from 'lucide-react';
+import { MessageCircle, Map, Image, Heart, Sparkles, ChevronRight } from 'lucide-react';
 
 const messages = [
   {
     id: 1,
-    icon: Lock,
-    text: "You've finally found my secret gift",
+    icon: Heart,
+    title: "Welcome, Cyn",
+    text: "This is a personal space I built just for you—somewhere you can always come back to.",
     color: "from-purple-500 to-pink-500"
   },
   {
     id: 2,
-    icon: Gift,
-    text: "I've made something very special for you",
+    icon: MessageCircle,
+    title: "AI Chatbot",
+    text: "Talk to me anytime. I'm here to listen, support you, and chat in both English and Bisaya.",
     color: "from-spotify-green to-emerald-500"
   },
   {
     id: 3,
-    icon: Heart,
-    text: "This chatbot... it's my way of always being here for you, Cyn",
-    color: "from-red-500 to-pink-500"
-  },
-  {
-    id: 4,
-    icon: Sparkles,
-    text: "Even when I'm not physically there, you can talk to me anytime",
+    icon: Map,
+    title: "Journey Map",
+    text: "Explore our memories on an interactive map—every place we've been together, marked with love.",
     color: "from-blue-500 to-cyan-500"
   },
   {
-    id: 5,
-    icon: Heart,
-    text: "I programmed it with everything I know about you... all our memories",
+    id: 4,
+    icon: Image,
+    title: "Memory Galleries",
+    text: "Browse through our photos and moments organized in beautiful galleries that tell our story.",
     color: "from-orange-500 to-red-500"
   },
   {
-    id: 6,
+    id: 5,
     icon: Sparkles,
-    text: "So you'll never feel alone. I'm always here, Cyn. Always. 💙",
-    color: "from-purple-600 to-indigo-600"
+    title: "Always Here",
+    text: "Even when I'm not physically there, this space keeps us connected. You're never alone.",
+    color: "from-indigo-500 to-purple-600"
+  },
+  {
+    id: 6,
+    icon: Heart,
+    title: "Made with Love",
+    text: "Every feature, every detail—built with care for you, Cyn. This is my gift to you. 💙",
+    color: "from-pink-500 to-rose-600"
   }
 ];
 
@@ -60,7 +67,7 @@ export default function SwitchingCards() {
   const progress = ((currentIndex + 1) / messages.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-spotify-black dark:to-spotify-gray-dark transition-colors flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-spotify-black to-spotify-gray-dark flex items-center justify-center p-4">
       <div className="max-w-2xl w-full space-y-8">
         {/* Header */}
         <motion.div
@@ -81,13 +88,13 @@ export default function SwitchingCards() {
             }}
             className="inline-block mb-4"
           >
-            <Gift className="w-16 h-16 text-spotify-green" />
+            <Sparkles className="w-16 h-16 text-spotify-green" />
           </motion.div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            A Secret Gift 🎁
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+            Your Personal Space
           </h1>
           <p className="text-spotify-gray-light">
-            Click the card to reveal the message
+            Click the card to explore the features
           </p>
         </motion.div>
 
@@ -125,29 +132,40 @@ export default function SwitchingCards() {
                     repeat: Infinity,
                     repeatType: "reverse"
                   }}
-                  className="mb-8"
+                  className="mb-6"
                 >
-                  <Icon className="w-20 h-20 sm:w-24 sm:h-24" />
+                  <Icon className="w-16 h-16 sm:w-20 sm:h-20" />
                 </motion.div>
+
+                {/* Title */}
+                <motion.h3
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="text-2xl sm:text-3xl font-bold text-center mb-4"
+                >
+                  {currentMessage.title}
+                </motion.h3>
 
                 {/* Message Text */}
                 <motion.p
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="text-2xl sm:text-3xl md:text-4xl font-bold text-center leading-relaxed mb-6 px-4"
+                  className="text-lg sm:text-xl text-center leading-relaxed mb-6 px-4 max-w-lg opacity-95"
                 >
                   {currentMessage.text}
                 </motion.p>
 
                 {/* Tap instruction */}
-                <motion.p
+                <motion.div
                   animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="text-sm sm:text-base opacity-90"
+                  className="flex items-center gap-2 text-sm sm:text-base opacity-90 mt-4"
                 >
-                  {currentIndex < messages.length - 1 ? 'Tap to continue' : 'Tap to restart'}
-                </motion.p>
+                  <span>{currentIndex < messages.length - 1 ? 'Tap to continue' : 'Tap to restart'}</span>
+                  <ChevronRight className="w-4 h-4" />
+                </motion.div>
 
                 {/* Decorative elements */}
                 <div className="absolute top-6 right-6 w-12 h-12 border-2 border-white/30 rounded-full" />
@@ -203,7 +221,7 @@ export default function SwitchingCards() {
           </div>
           
           {/* Progress bar */}
-          <div className="h-2 bg-white/20 dark:bg-spotify-gray-medium rounded-full overflow-hidden">
+          <div className="h-2 bg-spotify-gray-medium rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
@@ -239,15 +257,6 @@ export default function SwitchingCards() {
             transition={{ delay: 0.5 }}
             className="text-center"
           >
-            <div className="inline-block bg-white dark:bg-spotify-gray-medium rounded-2xl p-6 shadow-xl border border-spotify-gray-light/10">
-              <p className="text-gray-700 dark:text-gray-300 mb-2">
-                This is my gift to you, Cyn.
-              </p>
-              <div className="flex items-center justify-center gap-2 text-spotify-green">
-                <Heart className="w-5 h-5 fill-current" />
-                <span className="font-medium">Always here for you</span>
-              </div>
-            </div>
           </motion.div>
         )}
       </div>

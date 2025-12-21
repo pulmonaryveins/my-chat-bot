@@ -1,59 +1,22 @@
 /* eslint-disable no-unused-vars */
 import { Image } from 'lucide-react';
 import CategoryGallery from '../components/CategoryGallery';
+import Navigation from '../components/Navigation';
 
-// Sample images - replace with your actual images
-const images = [
-  {
-    id: 1,
-    url: 'https://via.placeholder.com/600x600/10B981/FFFFFF?text=Us+1',
-    caption: 'First date',
-    date: 'December 22, 2023'
-  },
-  {
-    id: 2,
-    url: 'https://via.placeholder.com/600x600/059669/FFFFFF?text=Us+2',
-    caption: 'Movie night',
-    date: 'January 2024'
-  },
-  {
-    id: 3,
-    url: 'https://via.placeholder.com/600x600/047857/FFFFFF?text=Us+3',
-    caption: 'Sinulog 2024',
-    date: 'January 2024'
-  },
-  {
-    id: 4,
-    url: 'https://via.placeholder.com/600x600/065F46/FFFFFF?text=Us+4',
-    caption: 'Beach day',
-    date: 'March 2024'
-  },
-  {
-    id: 5,
-    url: 'https://via.placeholder.com/600x600/10B981/FFFFFF?text=Us+5',
-    caption: 'Sunset together',
-    date: 'May 2024'
-  },
-  {
-    id: 6,
-    url: 'https://via.placeholder.com/600x600/059669/FFFFFF?text=Us+6',
-    caption: 'Intramurals 2024',
-    date: 'November 2024'
-  },
-  {
-    id: 7,
-    url: 'https://via.placeholder.com/600x600/047857/FFFFFF?text=Us+7',
-    caption: 'New Years Eve',
-    date: 'December 31, 2024'
-  },
-  {
-    id: 8,
-    url: 'https://via.placeholder.com/600x600/065F46/FFFFFF?text=Us+8',
-    caption: 'Sinulog 2025',
-    date: 'January 2025'
-  },
-  // Add more images here
+// Get all images from the gallery folder
+const imageFiles = [
+  '14', '31', '32', '39', '40', '41', '53', '54', '55', '58', '60', '61', '67', '74', '76', '77', '78', '83', '93', '94', '95', '96', '99',
+  '100', '101', '102', '115', '119', '120', '121', '126', '142', '143', '144', '154', '160', '161', '170', '171', '173', '174', '175', '176', '177', '178', '179',
+  '180', '181', '182', '183', '184', '185', '186', '187', '188', '189', '190', '192', '193', '194', '199',
+  '200', '201', '202', '203', '204', '205', '206', '207', '209', '210', '211', '214', '217', '218', '223', '226', '227', '228', '232', '233', '234', '235', '236', '240', '241', '242'
 ];
+
+const images = imageFiles.map((num, index) => ({
+  id: index + 1,
+  url: `/memories/gallery/${num}.png`,
+  caption: `Together ${index + 1}`,
+  date: 'Our journey'
+}));
 
 export default function OurGalleryPage() {
   return (

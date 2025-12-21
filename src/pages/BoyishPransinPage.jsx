@@ -1,35 +1,20 @@
 /* eslint-disable no-unused-vars */
 import { Heart } from 'lucide-react';
 import CategoryGallery from '../components/CategoryGallery';
+import Navigation from '../components/Navigation';
 
-// Sample images - replace with your actual images
-const images = [
-  {
-    id: 1,
-    url: 'https://via.placeholder.com/600x600/3B82F6/FFFFFF?text=Boyish+1',
-    caption: 'His playful grin',
-    date: 'December 2024'
-  },
-  {
-    id: 2,
-    url: 'https://via.placeholder.com/600x600/2563EB/FFFFFF?text=Boyish+2',
-    caption: 'Being silly',
-    date: 'January 2025'
-  },
-  {
-    id: 3,
-    url: 'https://via.placeholder.com/600x600/1D4ED8/FFFFFF?text=Boyish+3',
-    caption: 'That charming look',
-    date: 'November 2024'
-  },
-  {
-    id: 4,
-    url: 'https://via.placeholder.com/600x600/1E40AF/FFFFFF?text=Boyish+4',
-    caption: 'Making me laugh',
-    date: 'October 2024'
-  },
-  // Add more images here
+// Get all images from the boyish folder
+const imageFiles = [
+  '30', '35', '36', '37', '47', '48', '49', '50', '51', '56', '57', '75',
+  '124', '125', '129', '140', '149', '150', '151', '158', '159', '162', '163', '164'
 ];
+
+const images = imageFiles.map((num, index) => ({
+  id: index + 1,
+  url: `/memories/boyish/${num}.png`,
+  caption: `Memory ${index + 1}`,
+  date: 'Playful moments'
+}));
 
 export default function BoyishPransinPage() {
   return (

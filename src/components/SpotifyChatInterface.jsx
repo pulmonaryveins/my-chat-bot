@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import ChatHeader from './ChatHeader';
 import MessageBubble from './MessageBubble';
 import TypingIndicator from './TypingIndicator';
@@ -16,6 +18,7 @@ export default function SpotifyChatInterface() {
   const [isLoading, setIsLoading] = useState(true);
   const [showClearModal, setShowClearModal] = useState(false);
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -85,7 +88,7 @@ export default function SpotifyChatInterface() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-spotify-gray-dark flex items-center justify-center">
+      <div className="min-h-screen bg-spotify-gray-dark flex items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
@@ -96,7 +99,7 @@ export default function SpotifyChatInterface() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-spotify-black dark:to-spotify-gray-dark transition-colors">
+    <div className="flex flex-col h-screen bg-spotify-black transition-colors">
       <ChatHeader 
         botName="Vince" 
         avatarUrl="/avatar.png"
@@ -121,13 +124,13 @@ export default function SpotifyChatInterface() {
             >
               <div className="max-w-2xl w-full space-y-6">
                 {/* Main Welcome Card */}
-                <div className="bg-white dark:bg-spotify-gray-medium rounded-3xl p-8 shadow-xl border border-spotify-gray-light/10">
+                <div className="bg-spotify-gray-medium rounded-3xl p-8 shadow-xl border border-spotify-gray-light/10">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-spotify-green to-spotify-green-dark flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-spotify-green flex items-center justify-center">
                       <Sparkles className="w-8 h-8 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                      <h2 className="text-2xl font-bold text-white">
                         Hi, Cyn! 👋
                       </h2>
                       <p className="text-spotify-gray-light">I'm here for you</p>
@@ -135,33 +138,33 @@ export default function SpotifyChatInterface() {
                   </div>
 
                   <div className="space-y-4">
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                    <p className="text-gray-300 leading-relaxed">
                       Welcome back! You can talk to me about anything—share what's on your mind, 
                       vent about your day, or just say hi. I'm here to listen and support you.
                     </p>
 
                     {/* Feature Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
-                      <div className="bg-spotify-green/10 dark:bg-spotify-green/20 rounded-xl p-4 border border-spotify-green/20">
+                      <div className="bg-spotify-green/20 rounded-xl p-4 border border-spotify-green/20">
                         <div className="flex items-center gap-2 mb-2">
                           <Heart className="w-5 h-5 text-spotify-green" />
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                          <h3 className="font-semibold text-white">
                             Always Supportive
                           </h3>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-sm text-gray-400">
                           I understand you and care about your wellbeing
                         </p>
                       </div>
 
-                      <div className="bg-blue-500/10 dark:bg-blue-500/20 rounded-xl p-4 border border-blue-500/20">
+                      <div className="bg-blue-500/20 rounded-xl p-4 border border-blue-500/20">
                         <div className="flex items-center gap-2 mb-2">
                           <MessageCircle className="w-5 h-5 text-blue-500" />
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                          <h3 className="font-semibold text-white">
                             Natural Conversations
                           </h3>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-sm text-gray-400">
                           Talk to me in Bisaya, English, or mix both
                         </p>
                       </div>
@@ -182,7 +185,7 @@ export default function SpotifyChatInterface() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleSend(suggestion)}
-                      className="px-4 py-2 bg-white dark:bg-spotify-gray-medium rounded-full text-sm text-gray-700 dark:text-gray-300 hover:bg-spotify-green/10 dark:hover:bg-spotify-green/20 border border-spotify-gray-light/20 transition-colors"
+                      className="px-4 py-2 bg-spotify-gray-medium rounded-full text-sm text-gray-300 hover:bg-spotify-green/20 border border-spotify-gray-light/20 transition-colors"
                     >
                       {suggestion}
                     </motion.button>

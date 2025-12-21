@@ -1,35 +1,22 @@
 /* eslint-disable no-unused-vars */
 import { User } from 'lucide-react';
 import CategoryGallery from '../components/CategoryGallery';
+import Navigation from '../components/Navigation';
 
-// Sample images - replace with your actual images
-const images = [
-  {
-    id: 1,
-    url: 'https://via.placeholder.com/600x600/8B5CF6/FFFFFF?text=Pransin+1',
-    caption: 'His infectious smile',
-    date: 'December 2024'
-  },
-  {
-    id: 2,
-    url: 'https://via.placeholder.com/600x600/7C3AED/FFFFFF?text=Pransin+2',
-    caption: 'Looking thoughtful',
-    date: 'January 2025'
-  },
-  {
-    id: 3,
-    url: 'https://via.placeholder.com/600x600/6D28D9/FFFFFF?text=Pransin+3',
-    caption: 'Casual day out',
-    date: 'November 2024'
-  },
-  {
-    id: 4,
-    url: 'https://via.placeholder.com/600x600/5B21B6/FFFFFF?text=Pransin+4',
-    caption: 'His favorite spot',
-    date: 'October 2024'
-  },
-  // Add more images here
+// Get all images from the about-pransin folder
+const imageFiles = [
+  '1', '4', '6', '9', '10', '11', '12', '13', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29',
+  '33', '34', '38', '42', '43', '44', '45', '46', '59', '62', '63', '64', '68', '69', '70', '72', '73', '79', '80', '81', '82', '84', '85', '86', '87', '88', '89', '90', '91',
+  '97', '98', '103', '104', '105', '106', '108', '109', '110', '111', '112', '113', '114', '116', '117', '118', '122', '123', '127', '128', '130', '131', '132', '133', '134', '135', '136', '137', '138', '139', '140', '141', '145', '146', '147', '148',
+  '152', '153', '155', '156', '157', '165', '166', '167', '168', '169', '172', '191', '195', '196', '197', '198', '208', '212', '213', '215', '216', '219', '220', '221', '222', '224', '229', '230', '231', '237', '238', '239'
 ];
+
+const images = imageFiles.map((num, index) => ({
+  id: index + 1,
+  url: `/memories/about-pransin/${num}.png`,
+  caption: `Memory ${index + 1}`,
+  date: 'damn i miss u'
+}));
 
 export default function AboutPransinPage() {
   return (

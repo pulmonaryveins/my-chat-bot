@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Music2, ChevronUp, ChevronDown } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Music2, ChevronUp, ChevronDown, EyeOff } from 'lucide-react';
 import { useMusicPlayer } from '../contexts/MusicContext';
 
 export default function MusicPlayer() {
@@ -17,24 +17,71 @@ export default function MusicPlayer() {
   } = useMusicPlayer();
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Auto-hide on mobile when playing
+  useEffect(() => {
+    if (isMobile && isPlaying) {
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isMobile, isPlaying]);
 
   const currentSong = tracks[currentTrack];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 100 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.5 }}
-      className="fixed bottom-20 right-4 sm:right-6 z-50"
-    >
-      {/* Expanded Player */}
+    <>
+      {/* Toggle Button - Shows when player is hidden on mobile */}
       <AnimatePresence>
-        {isExpanded && (
+        {!isVisible && isMobile && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsVisible(true)}
+            className="fixed bottom-4 right-4 z-40 w-14 h-14 bg-spotify-green rounded-full shadow-2xl flex items-center justify-center"
+          >
+            <Music2 className="w-6 h-6 text-white" />
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Main Player */}
+      <AnimatePresence>
+        {isVisible && (
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            transition={{ duration: 0.3 }}
+            className="fixed bottom-4 right-4 sm:right-6 z-50"
+          >
+            {/* Expanded Player */}
+            <AnimatePresence>
+              {isExpanded && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="mb-3 bg-white/95 dark:bg-spotify-gray-medium/95 backdrop-blur-xl rounded-2xl shadow-2xl p-4 w-72 border border-gray-200 dark:border-spotify-gray-dark"
+            className="mb-3 bg-spotify-gray-medium/95 backdrop-blur-xl rounded-2xl shadow-2xl p-4 w-72 border border-spotify-gray-dark"
           >
             {/* Track Info */}
             <div className="mb-4">
@@ -43,10 +90,10 @@ export default function MusicPlayer() {
                   <Music2 className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                  <h3 className="text-sm font-semibold text-white truncate">
                     {currentSong.title}
                   </h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                  <p className="text-xs text-gray-400 truncate">
                     {currentSong.artist}
                   </p>
                 </div>
@@ -60,7 +107,7 @@ export default function MusicPlayer() {
                     className={`text-xs py-1.5 px-2 rounded-lg transition-colors ${
                       index === currentTrack
                         ? 'bg-spotify-green/10 text-spotify-green'
-                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-spotify-gray-dark'
+                        : 'text-gray-400 hover:bg-spotify-gray-dark'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -94,12 +141,12 @@ export default function MusicPlayer() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={toggleMute}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-spotify-gray-dark transition-colors"
+                className="p-2 rounded-lg hover:bg-spotify-gray-dark transition-colors"
               >
                 {isMuted ? (
-                  <VolumeX className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  <VolumeX className="w-4 h-4 text-gray-400" />
                 ) : (
-                  <Volume2 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  <Volume2 className="w-4 h-4 text-gray-400" />
                 )}
               </motion.button>
 
@@ -108,9 +155,9 @@ export default function MusicPlayer() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={playPrevious}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-spotify-gray-dark transition-colors"
+                  className="p-2 rounded-lg hover:bg-spotify-gray-dark transition-colors"
                 >
-                  <SkipBack className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                  <SkipBack className="w-5 h-5 text-gray-300" />
                 </motion.button>
 
                 <motion.button
@@ -130,9 +177,9 @@ export default function MusicPlayer() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={playNext}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-spotify-gray-dark transition-colors"
+                  className="p-2 rounded-lg hover:bg-spotify-gray-dark transition-colors"
                 >
-                  <SkipForward className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                  <SkipForward className="w-5 h-5 text-gray-300" />
                 </motion.button>
               </div>
 
@@ -145,7 +192,7 @@ export default function MusicPlayer() {
       {/* Compact Player */}
       <motion.div
         whileHover={{ scale: 1.02 }}
-        className="bg-white/95 dark:bg-spotify-gray-medium/95 backdrop-blur-xl rounded-full shadow-2xl border border-gray-200 dark:border-spotify-gray-dark overflow-hidden"
+        className="bg-spotify-gray-medium/95 backdrop-blur-xl rounded-2xl shadow-2xl p-3 border border-spotify-gray-dark"
       >
         <div className="flex items-center gap-2 px-3 py-2">
           {/* Play Button */}
@@ -184,10 +231,23 @@ export default function MusicPlayer() {
                   />
                 ))}
               </div>
-              <span className="text-xs text-gray-700 dark:text-gray-300 whitespace-nowrap pr-2">
+              <span className="text-xs text-gray-300 whitespace-nowrap pr-2">
                 {currentSong.title}
               </span>
             </motion.div>
+          )}
+
+          {/* Hide Button (Mobile Only) */}
+          {isMobile && (
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsVisible(false)}
+              className="p-1.5 rounded-lg hover:bg-spotify-gray-dark transition-colors"
+              title="Hide player"
+            >
+              <EyeOff className="w-4 h-4 text-gray-400" />
+            </motion.button>
           )}
 
           {/* Expand/Collapse */}
@@ -195,16 +255,19 @@ export default function MusicPlayer() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-spotify-gray-dark transition-colors"
+            className="p-1.5 rounded-lg hover:bg-spotify-gray-dark transition-colors"
           >
             {isExpanded ? (
-              <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+              <ChevronDown className="w-4 h-4 text-gray-400" />
             ) : (
-              <ChevronUp className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+              <ChevronUp className="w-4 h-4 text-gray-400" />
             )}
           </motion.button>
         </div>
       </motion.div>
-    </motion.div>
+      </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

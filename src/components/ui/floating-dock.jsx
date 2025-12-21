@@ -76,7 +76,7 @@ function IconContainer({ mouseX, title, icon, href }) {
         style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="aspect-square rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center relative hover:bg-spotify-green/20 dark:hover:bg-spotify-green/30 transition-colors"
+        className="aspect-square rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center relative hover:bg-spotify-green/20 transition-colors"
       >
         <AnimatePresence>
           {hovered && (

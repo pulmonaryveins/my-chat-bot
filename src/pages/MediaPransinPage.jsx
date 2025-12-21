@@ -1,35 +1,19 @@
 /* eslint-disable no-unused-vars */
 import { Camera } from 'lucide-react';
 import CategoryGallery from '../components/CategoryGallery';
+import Navigation from '../components/Navigation';
 
-// Sample images - replace with your actual images (can include video thumbnails)
-const images = [
-  {
-    id: 1,
-    url: 'https://via.placeholder.com/600x600/EC4899/FFFFFF?text=Video+1',
-    caption: 'Our first video together',
-    date: 'December 2024'
-  },
-  {
-    id: 2,
-    url: 'https://via.placeholder.com/600x600/DB2777/FFFFFF?text=Video+2',
-    caption: 'Dancing in the rain',
-    date: 'January 2025'
-  },
-  {
-    id: 3,
-    url: 'https://via.placeholder.com/600x600/BE185D/FFFFFF?text=Video+3',
-    caption: 'Singing our song',
-    date: 'November 2024'
-  },
-  {
-    id: 4,
-    url: 'https://via.placeholder.com/600x600/9F1239/FFFFFF?text=Video+4',
-    caption: 'Just being us',
-    date: 'October 2024'
-  },
-  // Add more videos/media here
+// Get all images from the media folder
+const imageFiles = [
+  '2', '3', '5', '7', '8', '52', '65', '66', '71', '92', '107'
 ];
+
+const images = imageFiles.map((num, index) => ({
+  id: index + 1,
+  url: `/memories/media/${num}.png`,
+  caption: `Special moment ${index + 1}`,
+  date: 'Captured memories'
+}));
 
 export default function MediaPransinPage() {
   return (
