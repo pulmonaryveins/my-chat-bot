@@ -1,151 +1,24 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Volume2, VolumeX, Heart, Play, Pause } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import Layout from '../components/Layout';
 import GridBackground from '../components/GridBackground';
+import { useMusicPlayer } from '../contexts/MusicContext';
 
 export default function HomePage() {
-  const [isMuted, setIsMuted] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef(null);
+  const { play, isPlaying } = useMusicPlayer();
 
   useEffect(() => {
     // Attempt to auto-play when component mounts
-    const playAudio = async () => {
-      if (audioRef.current) {
-        try {
-          await audioRef.current.play();
-          setIsPlaying(true);
-        } catch (error) {
-          console.log('Autoplay prevented - user interaction required:', error);
-          setIsPlaying(false);
-        }
-      }
-    };
-    playAudio();
+    if (!isPlaying) {
+      play();
+    }
   }, []);
 
-  const togglePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        audioRef.current.play();
-        setIsPlaying(true);
-      }
-    }
-  };
-
-  const toggleMute = () => {
-    if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
-  };
 
   return (
     <Layout>
       <GridBackground className="min-h-screen">
-        {/* Background Music - Multiple source formats for compatibility */}
-        <audio
-          ref={audioRef}
-          loop
-          muted={isMuted}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-        >
-          <source src="/about-you.mp3" type="audio/mpeg" />
-          <source src="/about-you.ogg" type="audio/ogg" />
-          <source src="/about-you.wav" type="audio/wav" />
-          Your browser does not support the audio element.
-        </audio>
-
-        {/* Music Controls - Fixed Bottom Right, Above Navbar */}
-        <div className="fixed bottom-28 right-4 sm:right-6 z-50 flex flex-col gap-2 sm:gap-3">
-          {/* Play/Pause Button */}
-          <motion.button
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={togglePlay}
-            className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-spotify-green to-emerald-500 rounded-full flex items-center justify-center shadow-2xl hover:shadow-spotify-green/50 transition-all"
-            aria-label="Play/Pause music"
-          >
-            <AnimatePresence mode="wait">
-              {isPlaying ? (
-                <motion.div
-                  key="pause"
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  exit={{ scale: 0, rotate: 180 }}
-                >
-                  <Pause className="w-6 h-6 sm:w-7 sm:h-7 text-white fill-current" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="play"
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  exit={{ scale: 0, rotate: 180 }}
-                >
-                  <Play className="w-6 h-6 sm:w-7 sm:h-7 text-white fill-current ml-1" />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.button>
-
-          {/* Mute Button */}
-          <motion.button
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.2 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={toggleMute}
-            className="w-10 h-10 sm:w-12 sm:h-12 bg-white dark:bg-spotify-gray-medium rounded-full flex items-center justify-center shadow-xl hover:shadow-lg transition-all border border-gray-200 dark:border-spotify-gray-dark"
-            aria-label="Toggle mute"
-          >
-            {isMuted ? (
-              <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 text-gray-700 dark:text-gray-300" />
-            ) : (
-              <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-spotify-green" />
-            )}
-          </motion.button>
-
-          {/* Now Playing Indicator */}
-          {isPlaying && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white dark:bg-spotify-gray-medium rounded-full px-3 py-1.5 sm:px-4 sm:py-2 shadow-xl border border-gray-200 dark:border-spotify-gray-dark"
-            >
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="flex gap-0.5">
-                  {[0, 1, 2].map((i) => (
-                    <motion.div
-                      key={i}
-                      animate={{ height: ['6px', '14px', '6px'] }}
-                      transition={{
-                        duration: 0.8,
-                        repeat: Infinity,
-                        delay: i * 0.2
-                      }}
-                      className="w-0.5 sm:w-1 bg-spotify-green rounded-full"
-                      style={{ height: '6px' }}
-                    />
-                  ))}
-                </div>
-                <span className="text-[10px] sm:text-xs text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                  About You
-                </span>
-              </div>
-            </motion.div>
-          )}
-        </div>
-
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-16 min-h-screen flex flex-col justify-center relative overflow-hidden">
           {/* Main Content */}
           <div className="text-center space-y-8 sm:space-y-12 relative z-10">
@@ -214,9 +87,9 @@ export default function HomePage() {
               className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-6 sm:pt-8 px-4"
             >
               {[
-                  { label: "Maps", path: "/maps" },
-                  { label: "Memories", path: "/memories" },
-                  { label: "Talk", path: "/chat" }
+                { label: "Maps", path: "/maps" },
+                { label: "Memories", path: "/memories" },
+                { label: "Talk", path: "/chat" }
               ].map((link, index) => (
                 <motion.a
                   key={index}

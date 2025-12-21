@@ -42,9 +42,6 @@ export default function Layout({ children }) {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-14 sm:h-16">
-            <div className="text-xl font-bold text-gray-900 dark:text-white">
-              For Francine ❤️
-            </div>
             
             {/* Theme Toggle - Right */}
             <motion.button
@@ -85,12 +82,6 @@ export default function Layout({ children }) {
         className="border-t border-spotify-gray-light/20 dark:border-spotify-gray-medium/20 py-6 sm:py-8 mt-12 sm:mt-16"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <p className="text-spotify-gray-light text-xs sm:text-sm">
-            Made with ❤️ for Francine
-          </p>
-          <p className="text-spotify-gray-light text-[10px] sm:text-xs mt-2">
-            © 2025 - Always here for you
-          </p>
         </div>
       </motion.footer>
     </div>
