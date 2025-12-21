@@ -419,7 +419,7 @@ export default function MapsPage() {
                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                  className="absolute z-50 w-full mt-2 bg-spotify-gray-medium/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-spotify-gray-light/20 overflow-hidden max-h-80 overflow-y-auto custom-scrollbar"
+                  className="absolute z-[9999] w-full mt-2 bg-spotify-gray-medium/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-spotify-gray-light/20 overflow-hidden max-h-60 sm:max-h-80 overflow-y-auto custom-scrollbar"
                 >
                   {searchResults.map((result, index) => (
                     <motion.button
@@ -462,7 +462,7 @@ export default function MapsPage() {
             >
               <div className="flex items-center gap-3">
                 <MapPin className="w-5 h-5 text-spotify-green" />
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                <p className="text-sm font-medium text-white">
                   Click anywhere on the map to add a new place
                 </p>
               </div>

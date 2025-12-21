@@ -10,7 +10,7 @@ const folders = [
     description: 'Photos that capture who Pransin is',
     icon: User,
     color: 'from-purple-500 to-indigo-600',
-    preview: '/memories/about-pransin/1.png',
+    preview: '/memories/about-pransin/169.png',
     count: 115
   },
   {
@@ -19,7 +19,7 @@ const folders = [
     description: 'His playful and charming side',
     icon: Heart,
     color: 'from-blue-500 to-cyan-600',
-    preview: '/memories/boyish/30.png',
+    preview: '/memories/boyish/162.png',
     count: 24
   },
   {
@@ -28,7 +28,7 @@ const folders = [
     description: 'Videos and special moments captured',
     icon: Camera,
     color: 'from-pink-500 to-rose-600',
-    preview: '/memories/media/2.png',
+    preview: '/memories/media/7.png',
     count: 11
   },
   {
@@ -37,7 +37,7 @@ const folders = [
     description: 'Beautiful moments we share together',
     icon: Image,
     color: 'from-spotify-green to-emerald-600',
-    preview: '/memories/gallery/14.png',
+    preview: '/memories/gallery/223.png',
     count: 87
   }
 ];
@@ -108,7 +108,7 @@ export default function MemoriesPage() {
               Our Memories
             </h1>
             <p className="text-xl sm:text-2xl text-spotify-gray-light font-light max-w-3xl mx-auto leading-relaxed">
-              Every folder holds pieces of our story, Cyn
+              Every folder holds pieces of our story
             </p>
           </motion.div>
 

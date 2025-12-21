@@ -111,41 +111,92 @@ export default function SpotifyChatInterface() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="flex-1 overflow-y-auto"
+        className="flex-1 overflow-y-auto relative"
       >
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 min-h-full flex flex-col">
+        {/* Animated Background Pattern - Only shows when no messages */}
+        {messages.length === 0 && !isTyping && (
+          <>
+            <div className="fixed inset-0 opacity-5 pointer-events-none">
+              <div className="absolute inset-0" style={{
+                backgroundImage: 'radial-gradient(circle at 2px 2px, rgb(29, 185, 84) 1px, transparent 0)',
+                backgroundSize: '48px 48px'
+              }} />
+            </div>
+            <div className="fixed top-1/4 left-1/4 w-96 h-96 bg-spotify-green/10 rounded-full blur-3xl animate-pulse pointer-events-none" />
+            <div className="fixed bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000 pointer-events-none" />
+          </>
+        )}
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 min-h-full flex flex-col relative z-10">
           {/* Welcome Card - Shows when no messages */}
           {messages.length === 0 && !isTyping && (
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="flex-1 flex items-center justify-center"
+              className="flex-1 flex items-center justify-center py-12 sm:py-20"
             >
-              <div className="max-w-2xl w-full space-y-6">
-                {/* Main Welcome Card */}
-                <div className="bg-spotify-gray-medium rounded-3xl p-8 shadow-xl border border-spotify-gray-light/10">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-16 h-16 rounded-full bg-spotify-green flex items-center justify-center">
-                      <Sparkles className="w-8 h-8 text-white" />
+              <div className="max-w-2xl w-full space-y-8">
+                {/* Floating Icon */}
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="flex justify-center mb-8"
+                >
+                  <motion.div
+                    animate={{
+                      y: [0, -10, 0],
+                      rotate: [0, 5, -5, 0]
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="relative"
+                  >
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-spotify-green/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-spotify-green/20">
+                      <MessageCircle className="w-10 h-10 sm:w-12 sm:h-12 text-spotify-green" />
                     </div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-white">
-                        Hi, Cyn! 👋
-                      </h2>
-                      <p className="text-spotify-gray-light">I'm here for you</p>
-                    </div>
-                  </div>
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="absolute inset-0 bg-spotify-green/20 rounded-full blur-xl"
+                    />
+                  </motion.div>
+                </motion.div>
 
-                  <div className="space-y-4">
-                    <p className="text-gray-300 leading-relaxed">
+                {/* Hero Title */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="text-center mb-8"
+                >
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+                    Ello newb! 👋
+                  </h1>
+                  <p className="text-xl sm:text-2xl text-spotify-gray-light font-light">
+                    Lemme know if you need anything 
+                  </p>
+                </motion.div>
+
+                {/* Main Welcome Card */}
+                <div className="bg-spotify-gray-medium/30 backdrop-blur-sm rounded-3xl p-6 sm:p-8 border border-spotify-gray-light/10">
+
+                  <div className="space-y-6">
+                    <p className="text-gray-300 leading-relaxed text-center">
                       Welcome back! You can talk to me about anything—share what's on your mind, 
                       vent about your day, or just say hi. I'm here to listen and support you.
                     </p>
 
                     {/* Feature Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
-                      <div className="bg-spotify-green/20 rounded-xl p-4 border border-spotify-green/20">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <motion.div
+                        whileHover={{ scale: 1.05, y: -5 }}
+                        className="bg-spotify-green/10 backdrop-blur-sm rounded-2xl p-5 border border-spotify-green/20 hover:border-spotify-green/30 transition-all duration-300"
+                      >
                         <div className="flex items-center gap-2 mb-2">
                           <Heart className="w-5 h-5 text-spotify-green" />
                           <h3 className="font-semibold text-white">
@@ -155,11 +206,14 @@ export default function SpotifyChatInterface() {
                         <p className="text-sm text-gray-400">
                           I understand you and care about your wellbeing
                         </p>
-                      </div>
+                      </motion.div>
 
-                      <div className="bg-blue-500/20 rounded-xl p-4 border border-blue-500/20">
+                      <motion.div
+                        whileHover={{ scale: 1.05, y: -5 }}
+                        className="bg-purple-500/10 backdrop-blur-sm rounded-2xl p-5 border border-purple-500/20 hover:border-purple-500/30 transition-all duration-300"
+                      >
                         <div className="flex items-center gap-2 mb-2">
-                          <MessageCircle className="w-5 h-5 text-blue-500" />
+                          <Sparkles className="w-5 h-5 text-purple-400" />
                           <h3 className="font-semibold text-white">
                             Natural Conversations
                           </h3>
@@ -167,13 +221,18 @@ export default function SpotifyChatInterface() {
                         <p className="text-sm text-gray-400">
                           Talk to me in Bisaya, English, or mix both
                         </p>
-                      </div>
+                      </motion.div>
                     </div>
                   </div>
                 </div>
 
                 {/* Quick Suggestions */}
-                <div className="flex flex-wrap gap-2 justify-center">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                  className="flex flex-wrap gap-3 justify-center"
+                >
                   {[
                     "Kumusta ka?",
                     "I'm feeling stressed",
@@ -185,18 +244,18 @@ export default function SpotifyChatInterface() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleSend(suggestion)}
-                      className="px-4 py-2 bg-spotify-gray-medium rounded-full text-sm text-gray-300 hover:bg-spotify-green/20 border border-spotify-gray-light/20 transition-colors"
+                      className="px-5 py-2.5 bg-spotify-gray-medium/50 backdrop-blur-sm rounded-full text-sm font-medium text-gray-300 hover:bg-spotify-green/20 hover:text-white border border-spotify-gray-light/20 hover:border-spotify-green/30 transition-all duration-300"
                     >
                       {suggestion}
                     </motion.button>
                   ))}
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           )}
 
           {/* Messages */}
-          <div className="space-y-6 flex-1">
+          <div className="space-y-4 sm:space-y-6 flex-1 pb-4">
             <AnimatePresence>
               {messages.map((msg) => (
                 <MessageBubble

@@ -32,9 +32,27 @@ export const MusicProvider = ({ children }) => {
     },
     {
       id: 3,
-      title: 'Bad',
-      artist: 'Wave to Earth',
-      src: '/bad.mp3'
+      title: 'Be with You',
+      artist: 'The Ridleys',
+      src: '/be-with-you.mp3'
+    },
+    {
+      id: 4,
+      title: 'My Universe',
+      artist: 'Rico Blanco',
+      src: '/universe.mp3'
+    },
+    {
+      id: 5,
+      title: 'An Art Gallary Could Never Be as Unique as You',
+      artist: 'mrld',
+      src: '/art-gallery.mp3'
+    },
+    {
+      id: 6,
+      title: 'Araw-Araw',
+      artist: 'Ben&Ben',
+      src: '/araw-araw.mp3'
     }
   ];
 
