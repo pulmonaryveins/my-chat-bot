@@ -53,6 +53,24 @@ export const MusicProvider = ({ children }) => {
       title: 'Araw-Araw',
       artist: 'Ben&Ben',
       src: '/araw-araw.mp3'
+    },
+    {
+      id: 7,
+      title: 'Die for You',
+      artist: 'Joji',
+      src: '/die-for-you.mp3'
+    },
+    {
+      id: 8,
+      title: 'Enchanted',
+      artist: 'Taylor Swift',
+      src: '/enchanted.mp3'
+    },
+    {
+      id: 9,
+      title: 'Last Night On Earth',
+      artist: 'Green Day',
+      src: '/last-day.mp3'
     }
   ];
 
@@ -101,8 +119,18 @@ export const MusicProvider = ({ children }) => {
       playNext();
     };
 
+    const handleError = (e) => {
+      console.error('Audio playback error:', e);
+      // Try to recover by playing next track
+      setTimeout(() => playNext(), 500);
+    };
+
     audio.addEventListener('ended', handleEnded);
-    return () => audio.removeEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+    return () => {
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+    };
   }, [playNext]);
 
   const togglePlay = useCallback(() => {
@@ -121,11 +149,13 @@ export const MusicProvider = ({ children }) => {
   }, [isMuted]);
 
   const changeTrack = useCallback((index) => {
+    const wasPlaying = isPlaying;
     setCurrentTrack(index);
-    if (isPlaying) {
+    // Always attempt to play the newly selected track
+    if (wasPlaying || index !== currentTrack) {
       setTimeout(() => play(), 100);
     }
-  }, [isPlaying, play]);
+  }, [isPlaying, play, currentTrack]);
 
   const value = {
     audioRef,

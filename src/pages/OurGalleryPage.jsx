@@ -23,7 +23,7 @@ export default function OurGalleryPage() {
     <CategoryGallery
       title="Our Gallery"
       description="Beautiful moments we share together"
-      message="Every photo here is a piece of our story - the laughter, the adventures, the quiet moments. This is us, Cyn and Pransin, building something beautiful together."
+      message=""
       color="from-emerald-500 to-teal-600"
       icon={Image}
       images={images}

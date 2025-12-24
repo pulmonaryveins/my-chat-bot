@@ -45,9 +45,11 @@ export default function Navigation() {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => navigate('/home')}
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-spotify-green to-emerald-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">P</span>
-            </div>
+            <img 
+              src="/logo.png" 
+              alt="Project Pransin Logo" 
+              className="w-8 h-8 rounded-lg object-cover"
+            />
             <span className="text-white font-semibold text-lg hidden sm:block">Project-Pransin</span>
           </motion.div>
 

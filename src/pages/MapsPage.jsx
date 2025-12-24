@@ -2,9 +2,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapContainer, TileLayer, Marker, Polyline, Circle, useMapEvents, useMap } from 'react-leaflet';
-import { MapPin, Plus, X, Edit, Trash2, Calendar, Search, Loader2 } from 'lucide-react';
+import { MapPin, Plus, X, Edit, Trash2, Calendar, Search, Loader2, Navigation as NavigationIcon } from 'lucide-react';
 import Navigation from '../components/Navigation';
-import Layout from '../components/Layout';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { db } from '../config/firebase';
@@ -121,8 +120,18 @@ export default function MapsPage() {
     setIsSearching(true);
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=ph`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=ph`,
+        {
+          headers: {
+            'User-Agent': 'Project-Pransin-Map/1.0'
+          }
+        }
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       setSearchResults(data);
     } catch (error) {
@@ -251,14 +260,12 @@ export default function MapsPage() {
 
   if (isLoading) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="w-12 h-12 text-spotify-green animate-spin mx-auto mb-4" />
-            <p className="text-gray-400">Loading your journey...</p>
-          </div>
+      <div className="min-h-screen bg-spotify-black flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-spotify-green animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Loading your journey...</p>
         </div>
-      </Layout>
+      </div>
     );
   }
 
@@ -374,7 +381,7 @@ export default function MapsPage() {
                     : 'bg-spotify-gray-medium border border-spotify-gray-light/20 text-gray-300 hover:border-spotify-green/30'
                 }`}
               >
-                <Navigation className="w-5 h-5" />
+                <NavigationIcon className="w-5 h-5" />
                 <span>{showRoutes ? 'Hide' : 'Show'} Routes</span>
               </motion.button>
             </div>
@@ -385,7 +392,8 @@ export default function MapsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-8 relative max-w-3xl mx-auto"
+            className="mb-8 relative max-w-3xl mx-auto z-50"
+            style={{ position: 'relative', zIndex: 50 }}
           >
             <div className="relative">
               <Search className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-spotify-gray-light z-10" />
@@ -419,7 +427,8 @@ export default function MapsPage() {
                   initial={{ opacity: 0, y: -10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                  className="absolute z-[9999] w-full mt-2 bg-spotify-gray-medium/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-spotify-gray-light/20 overflow-hidden max-h-60 sm:max-h-80 overflow-y-auto custom-scrollbar"
+                  className="absolute w-full mt-2 bg-spotify-gray-medium/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-spotify-gray-light/20 overflow-hidden max-h-60 sm:max-h-80 overflow-y-auto custom-scrollbar"
+                  style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10000 }}
                 >
                   {searchResults.map((result, index) => (
                     <motion.button
@@ -449,7 +458,7 @@ export default function MapsPage() {
       </section>
 
       {/* Map Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-12 relative z-0">
 
         {/* Adding Marker Notice */}
         <AnimatePresence>
@@ -696,7 +705,7 @@ export default function MapsPage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={handleCancelEdit}
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
               />
               
               <motion.div
@@ -704,10 +713,12 @@ export default function MapsPage() {
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.9, opacity: 0, y: 20 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                onClick={(e) => e.stopPropagation()}
+                className="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-none"
               >
-                <div className="bg-spotify-gray-medium/95 backdrop-blur-xl rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-8 border border-spotify-gray-light/20">
+                <div 
+                  className="bg-spotify-gray-medium/95 backdrop-blur-xl rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-8 border border-spotify-gray-light/20 pointer-events-auto"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
                       <div className="p-3 bg-spotify-green/10 rounded-2xl">

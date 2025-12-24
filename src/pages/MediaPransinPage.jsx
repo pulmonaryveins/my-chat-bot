@@ -20,7 +20,7 @@ export default function MediaPransinPage() {
     <CategoryGallery
       title="Media Pransin"
       description="Videos and special moments captured"
-      message="Every video, every moment in motion - they all capture the magic of us in ways photos can't."
+      message=""
       color="from-pink-500 to-rose-600"
       icon={Camera}
       images={images}

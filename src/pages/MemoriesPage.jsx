@@ -7,7 +7,7 @@ const folders = [
   {
     id: 'about-pransin',
     title: 'About Pransin',
-    description: 'Photos that capture who Pransin is',
+    description: 'WHAT MAKES YOU PRANSIN, ILL MISS EVERYTHING ABOUT YOU :((',
     icon: User,
     color: 'from-purple-500 to-indigo-600',
     preview: '/memories/about-pransin/169.png',
@@ -16,7 +16,7 @@ const folders = [
   {
     id: 'boyish-pransin',
     title: 'Boyish Pransin',
-    description: 'His playful and charming side',
+    description: 'DILI GUD KO MAKA GET OVER SA BOYISH SIDE PRANSIN, I LOVE EVERYSIDE OF YOU COULD BE BOYISH OR GIRLY',
     icon: Heart,
     color: 'from-blue-500 to-cyan-600',
     preview: '/memories/boyish/162.png',
@@ -25,7 +25,7 @@ const folders = [
   {
     id: 'media-pransin',
     title: 'Media Pransin',
-    description: 'Videos and special moments captured',
+    description: 'BEST PHOTOGRAPHER, GRAPHIC DESIGNER, VIDEOGRAPHER, EDITOR, CONTENT CREATOR, TECH WRITER. BEST PUBLIC REATIONS OFFICER EVER, ME NEXT.',
     icon: Camera,
     color: 'from-pink-500 to-rose-600',
     preview: '/memories/media/7.png',
@@ -34,7 +34,7 @@ const folders = [
   {
     id: 'our-gallery',
     title: 'Our Gallery',
-    description: 'Beautiful moments we share together',
+    description: 'SMOL GALLARY OF OUR MEMORIES TOGETHER :((',
     icon: Image,
     color: 'from-spotify-green to-emerald-600',
     preview: '/memories/gallery/223.png',
@@ -212,12 +212,13 @@ export default function MemoriesPage() {
                 }}
                 className="mb-6"
               >
-                <Heart className="w-12 h-12 text-pink-500 fill-current mx-auto" />
               </motion.div>
               <p className="text-gray-300 text-lg sm:text-xl leading-relaxed">
-                Each photo, each moment—they all tell the story of us. 
-                These folders aren't just memories; they're pieces of my heart that belong to you.
+                Each photo captures a moment we shared. They’re memories I’ll always value.
               </p>
+              <p className="text-spotify-gray-light text-lg">
+              — 🐱
+            </p>
             </div>
           </motion.div>
         </div>

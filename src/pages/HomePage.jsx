@@ -121,7 +121,7 @@ export default function HomePage() {
             {[
               { icon: Heart, label: 'Memories Preserved', value: 'Forever' },
               { icon: Play, label: 'Always Playing', value: 'On Repeat' },
-              { icon: Sparkles, label: 'Made For', value: 'Cyn' }
+              { icon: Sparkles, label: 'Made For', value: 'Newb' }
             ].map((item, index) => (
               <motion.div
                 key={index}

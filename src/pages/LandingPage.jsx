@@ -28,11 +28,18 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-spotify-black flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated Background Elements */}
+      {/* Animated Background Elements - Matching Home Page */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-64 h-64 bg-spotify-green/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-spotify-green/5 rounded-full blur-3xl animate-pulse delay-700"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-spotify-green/5 rounded-full blur-3xl"></div>
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, rgb(29, 185, 84) 1px, transparent 0)',
+            backgroundSize: '48px 48px'
+          }} />
+        </div>
+        {/* Gradient Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-spotify-green/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       {/* Main Content */}
@@ -71,11 +78,11 @@ export default function LandingPage() {
           transition={{ delay: 0.4 }}
           className="text-center mb-8"
         >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 px-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 px-4 tracking-tight">
             Welcome Pransin!
           </h1>
           <div className="flex items-center justify-center gap-2 mb-2">
-            <p className="text-lg sm:text-xl text-gray-300">
+            <p className="text-lg sm:text-xl text-spotify-gray-light font-light">
               Glad you finally found my secret gift
             </p>
           </div>
@@ -86,7 +93,7 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="bg-spotify-gray-dark/50 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-spotify-gray-medium/30"
+          className="bg-spotify-gray-dark/50 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-spotify-gray-medium/20"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Hint */}

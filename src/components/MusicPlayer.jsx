@@ -13,7 +13,8 @@ export default function MusicPlayer() {
     togglePlay,
     playNext,
     playPrevious,
-    toggleMute
+    toggleMute,
+    changeTrack
   } = useMusicPlayer();
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -102,12 +103,16 @@ export default function MusicPlayer() {
               {/* Track List */}
               <div className="space-y-1 max-h-32 overflow-y-auto">
                 {tracks.map((track, index) => (
-                  <div
+                  <button
                     key={track.id}
-                    className={`text-xs py-1.5 px-2 rounded-lg transition-colors ${
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      changeTrack(index);
+                    }}
+                    className={`w-full text-xs py-1.5 px-2 rounded-lg transition-colors cursor-pointer ${
                       index === currentTrack
                         ? 'bg-spotify-green/10 text-spotify-green'
-                        : 'text-gray-400 hover:bg-spotify-gray-dark'
+                        : 'text-gray-400 hover:bg-spotify-gray-dark hover:text-white'
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -130,7 +135,7 @@ export default function MusicPlayer() {
                         </div>
                       )}
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>

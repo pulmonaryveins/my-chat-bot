@@ -20,8 +20,8 @@ export default function BoyishPransinPage() {
   return (
     <CategoryGallery
       title="Boyish Pransin"
-      description="His playful and charming side"
-      message="The way you make me laugh, the way you're unapologetically yourself - that's the Pransin I adore."
+      description="DILI GUD KO MAKA GET OVER SA BOYISH SIDE PRANSIN, I LOVE EVERYSIDE OF YOU COULD BE BOYISH OR GIRLY"
+      message=""
       color="from-blue-500 to-cyan-600"
       icon={Heart}
       images={images}
