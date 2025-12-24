@@ -11,15 +11,15 @@ const imageFiles = [
 const images = imageFiles.map((num, index) => ({
   id: index + 1,
   url: `/memories/media/${num}.png`,
-  caption: `Special moment ${index + 1}`,
-  date: 'Captured memories'
+  caption: `cutie ${index + 1}`,
+  date: 'BEST MEDIA'
 }));
 
 export default function MediaPransinPage() {
   return (
     <CategoryGallery
       title="Media Pransin"
-      description="Videos and special moments captured"
+      description="BEST PHOTOGRAPHER, GRAPHIC DESIGNER, VIDEOGRAPHER, EDITOR, CONTENT CREATOR, TECH WRITER. BEST PUBLIC REATIONS OFFICER EVER, ME NEXT."
       message=""
       color="from-pink-500 to-rose-600"
       icon={Camera}

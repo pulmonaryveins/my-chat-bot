@@ -12,8 +12,8 @@ const imageFiles = [
 const images = imageFiles.map((num, index) => ({
   id: index + 1,
   url: `/memories/boyish/${num}.png`,
-  caption: `Memory ${index + 1}`,
-  date: 'Playful moments'
+  caption: `Baddie ${index + 1}`,
+  date: 'I miss'
 }));
 
 export default function BoyishPransinPage() {

@@ -14,15 +14,15 @@ const imageFiles = [
 const images = imageFiles.map((num, index) => ({
   id: index + 1,
   url: `/memories/gallery/${num}.png`,
-  caption: `Together ${index + 1}`,
-  date: 'Our journey'
+  caption: `Memories ${index + 1}`,
+  date: 'noob vins'
 }));
 
 export default function OurGalleryPage() {
   return (
     <CategoryGallery
       title="Our Gallery"
-      description="Beautiful moments we share together"
+      description="SMOL GALLARY OF OUR MEMORIES TOGETHER :(("
       message=""
       color="from-emerald-500 to-teal-600"
       icon={Image}
