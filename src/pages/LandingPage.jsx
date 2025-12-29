@@ -13,7 +13,7 @@ export default function LandingPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (passcode.toLowerCase() === 'pingu') {
+    if (passcode.toLowerCase() === 'p!ngu') {
       // Correct passcode - redirect to switching cards
       localStorage.setItem('hasEnteredPasscode', 'true');
       navigate('/cards');
