@@ -19,7 +19,7 @@ export default function LandingPage() {
       navigate('/cards');
     } else {
       // Incorrect passcode - show error
-      setError('Hmm, that\'s not quite right. Think about what we both loved...');
+      setError('Hmm, that\'s not quite right. Think about what we both loved... (!)');
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
       setPasscode('');
@@ -99,7 +99,7 @@ export default function LandingPage() {
             {/* Hint */}
             <div className="bg-spotify-gray-medium/30 rounded-2xl p-4 border border-spotify-green/20">
               <p className="text-sm text-gray-300 text-center leading-relaxed">
-                <span className="text-spotify-green font-medium">Hint:</span> We both loved. You might find the code from the gifts I've given
+                <span className="text-spotify-green font-medium">Hint:</span> We both loved. You might find the code from the gifts I've given (!)
               </p>
             </div>
 
