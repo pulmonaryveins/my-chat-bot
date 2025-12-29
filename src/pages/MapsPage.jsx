@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapContainer, TileLayer, Marker, Polyline, Circle, useMapEvents, useMap } from 'react-leaflet';
-import { MapPin, Plus, X, Edit, Trash2, Calendar, Search, Loader2, Navigation as NavigationIcon } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
+import { MapPin, Plus, X, Edit, Trash2, Calendar, Search, Loader2 } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -77,7 +77,6 @@ export default function MapsPage() {
   const [selectedPin, setSelectedPin] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [tempLocation, setTempLocation] = useState(null);
-  const [showRoutes, setShowRoutes] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -253,11 +252,6 @@ export default function MapsPage() {
     setTempLocation(null);
   };
 
-  // Generate routes (lines between pins in chronological order)
-  const routes = pins.length > 1 ? pins
-    .sort((a, b) => new Date(a.date) - new Date(b.date))
-    .map(pin => [pin.lat, pin.lng]) : [];
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-spotify-black flex items-center justify-center">
@@ -337,7 +331,7 @@ export default function MapsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 max-w-4xl mx-auto"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 max-w-3xl mx-auto"
           >
             <motion.div
               whileHover={{ scale: 1.05, y: -5 }}
@@ -346,16 +340,6 @@ export default function MapsPage() {
               <p className="text-3xl font-bold text-white mb-1">{pins.length}</p>
               <p className="text-sm text-spotify-gray-light uppercase tracking-wider">Places Saved</p>
             </motion.div>
-            
-            {pins.length > 1 && (
-              <motion.div
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-spotify-gray-medium/30 backdrop-blur-sm border border-spotify-gray-medium/20 rounded-2xl p-6 hover:border-spotify-green/30 transition-all duration-300"
-              >
-                <p className="text-3xl font-bold text-spotify-green mb-1">{pins.length - 1}</p>
-                <p className="text-sm text-spotify-gray-light uppercase tracking-wider">Connections</p>
-              </motion.div>
-            )}
 
             <motion.button
               whileHover={{ scale: 1.05, y: -5 }}
@@ -367,25 +351,6 @@ export default function MapsPage() {
               <span className="text-sm font-semibold text-white uppercase tracking-wider">Add Place</span>
             </motion.button>
           </motion.div>
-
-          {/* Routes Toggle */}
-          {pins.length > 1 && (
-            <div className="flex justify-center mb-6">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowRoutes(!showRoutes)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all ${
-                  showRoutes
-                    ? 'bg-spotify-green text-white shadow-lg shadow-spotify-green/30'
-                    : 'bg-spotify-gray-medium border border-spotify-gray-light/20 text-gray-300 hover:border-spotify-green/30'
-                }`}
-              >
-                <NavigationIcon className="w-5 h-5" />
-                <span>{showRoutes ? 'Hide' : 'Show'} Routes</span>
-              </motion.button>
-            </div>
-          )}
 
           {/* Search Bar */}
           <motion.div
@@ -428,7 +393,7 @@ export default function MapsPage() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.95 }}
                   className="absolute w-full mt-2 bg-spotify-gray-medium/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-spotify-gray-light/20 overflow-hidden max-h-60 sm:max-h-80 overflow-y-auto custom-scrollbar"
-                  style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10000 }}
+                  style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10001 }}
                 >
                   {searchResults.map((result, index) => (
                     <motion.button
@@ -490,7 +455,7 @@ export default function MapsPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-spotify-gray-dark"
+          className="rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-spotify-gray-dark relative"
           style={{ height: '600px' }}
         >
           <MapContainer
@@ -507,36 +472,9 @@ export default function MapsPage() {
             <MapClickHandler onMapClick={handleMapClick} isAddingMarker={isAddingMarker} />
             {flyToLocation && <FlyToLocation center={flyToLocation.center} zoom={flyToLocation.zoom} />}
 
-            {/* Draw routes */}
-            {showRoutes && pins.length > 1 && (
-              <Polyline
-                positions={routes}
-                pathOptions={{
-                  color: '#1DB954',
-                  weight: 4,
-                  opacity: 0.8,
-                  dashArray: '10, 10',
-                  lineCap: 'round',
-                  lineJoin: 'round',
-                }}
-              />
-            )}
-
-            {/* Render markers with radius circles - NO POPUPS */}
+            {/* Render markers with popups */}
             {pins.map((pin) => (
-              <motion.div key={pin.id}>
-                <Circle
-                  center={[pin.lat, pin.lng]}
-                  radius={pin.radius || 500}
-                  pathOptions={{
-                    fillColor: '#1DB954',
-                    fillOpacity: 0.1,
-                    color: '#1DB954',
-                    weight: 2,
-                    opacity: 0.5,
-                  }}
-                />
-                
+              <div key={pin.id}>
                 <Marker
                   position={[pin.lat, pin.lng]}
                   icon={customIcon}
@@ -546,103 +484,84 @@ export default function MapsPage() {
                       setFlyToLocation({ center: [pin.lat, pin.lng], zoom: 15 });
                     },
                   }}
-                />
-              </motion.div>
+                >
+                  {selectedPin?.id === pin.id && (
+                    <Popup
+                      offset={[0, -42]}
+                      closeButton={false}
+                      autoClose={false}
+                      closeOnClick={false}
+                      className="custom-popup"
+                    >
+                      <div className="relative">
+                        {/* Info Card Content */}
+                        <div className="bg-white dark:bg-spotify-gray-medium rounded-2xl shadow-2xl border border-gray-200 dark:border-spotify-gray-light/20 overflow-hidden min-w-[280px] max-w-sm">
+                          <div className="p-4">
+                            <div className="flex items-start gap-3 mb-3">
+                              <div className="p-2 bg-spotify-green/10 rounded-xl flex-shrink-0">
+                                <MapPin className="w-5 h-5 text-spotify-green" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h3 className="text-base font-bold text-gray-900 dark:text-white mb-1 break-words leading-tight">
+                                  {pin.title}
+                                </h3>
+                                <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-spotify-gray-light">
+                                  <Calendar className="w-3.5 h-3.5" />
+                                  <span>{new Date(pin.date).toLocaleDateString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                  })}</span>
+                                </div>
+                              </div>
+                              <button
+                                onClick={() => setSelectedPin(null)}
+                                className="p-1 hover:bg-gray-100 dark:hover:bg-spotify-gray-dark rounded-lg transition-colors flex-shrink-0"
+                              >
+                                <X className="w-4 h-4 text-gray-500 dark:text-spotify-gray-light" />
+                              </button>
+                            </div>
+
+                            {/* Message */}
+                            {pin.message && (
+                              <div className="mb-3 bg-gray-50 dark:bg-spotify-gray-dark/50 rounded-xl p-3 max-h-24 overflow-y-auto custom-scrollbar">
+                                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words">
+                                  {pin.message}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Action Buttons */}
+                            <div className="flex items-center gap-2">
+                              <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => handleEditPin(pin)}
+                                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-100 dark:bg-spotify-gray-dark hover:bg-gray-200 dark:hover:bg-spotify-green/20 border border-gray-200 dark:border-spotify-gray-light/20 dark:hover:border-spotify-green/30 text-gray-900 dark:text-white rounded-xl text-sm font-medium transition-all"
+                              >
+                                <Edit className="w-3.5 h-3.5" />
+                                <span>Edit</span>
+                              </motion.button>
+                              <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => handleDeletePin(pin.id)}
+                                className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 border border-red-200 dark:border-red-500/20 dark:hover:border-red-500/40 text-red-600 dark:text-red-400 rounded-xl text-sm font-medium transition-all"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Delete</span>
+                              </motion.button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Popup>
+                  )}
+                </Marker>
+              </div>
             ))}
           </MapContainer>
         </motion.div>
-
-        {/* Improved Pin Details Modal */}
-        <AnimatePresence>
-          {selectedPin && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setSelectedPin(null)}
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
-              />
-              
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="bg-spotify-gray-medium/95 backdrop-blur-xl rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden border border-spotify-gray-light/20">
-                  {/* Header */}
-                  <div className="relative p-6 sm:p-8">
-                    <button
-                      onClick={() => setSelectedPin(null)}
-                      className="absolute top-4 right-4 p-2 hover:bg-spotify-gray-dark rounded-full transition-colors"
-                    >
-                      <X className="w-5 h-5 text-spotify-gray-light" />
-                    </button>
-                    
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className="p-3 bg-spotify-green/10 rounded-2xl">
-                        <MapPin className="w-7 h-7 text-spotify-green" />
-                      </div>
-                      <div className="flex-1 pr-8">
-                        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 break-words">{selectedPin.title}</h2>
-                        <div className="flex items-center gap-2 text-sm text-spotify-gray-light">
-                          <Calendar className="w-4 h-4" />
-                          <span>{new Date(selectedPin.date).toLocaleDateString('en-US', {
-                            month: 'long',
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="px-6 sm:px-8 pb-6 max-h-[50vh] overflow-y-auto custom-scrollbar">
-                    {selectedPin.message ? (
-                      <div className="bg-spotify-gray-dark/50 border border-spotify-gray-dark rounded-2xl p-4 sm:p-6">
-                        <p className="text-gray-300 leading-relaxed whitespace-pre-wrap break-words">
-                          {selectedPin.message}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-spotify-gray-light italic">
-                          No message for this place yet
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Footer - Minimal Buttons */}
-                  <div className="border-t border-spotify-gray-dark/30 p-4 sm:p-6 flex items-center justify-end gap-3">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleEditPin(selectedPin)}
-                      className="flex items-center gap-2 px-4 py-2 bg-spotify-gray-dark hover:bg-spotify-green/20 border border-spotify-gray-light/20 hover:border-spotify-green/30 text-white rounded-xl font-medium transition-all"
-                    >
-                      <Edit className="w-4 h-4" />
-                      <span className="hidden sm:inline">Edit</span>
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleDeletePin(selectedPin.id)}
-                      className="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 text-red-400 rounded-xl font-medium transition-all"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span className="hidden sm:inline">Delete</span>
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
 
         {/* Pin List */}
         {pins.length > 0 && (
@@ -830,6 +749,39 @@ export default function MapsPage() {
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #10b981;
+        }
+
+        /* Custom Popup Styling with Arrow Pointer */
+        .custom-popup .leaflet-popup-content-wrapper {
+          background: transparent !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+          border-radius: 0 !important;
+        }
+        .custom-popup .leaflet-popup-content {
+          margin: 0 !important;
+          position: relative;
+        }
+        .custom-popup .leaflet-popup-tip-container {
+          display: none;
+        }
+        .custom-popup .leaflet-popup-content::after {
+          content: '';
+          position: absolute;
+          bottom: -12px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 0;
+          height: 0;
+          border-left: 12px solid transparent;
+          border-right: 12px solid transparent;
+          border-top: 12px solid white;
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+        @media (prefers-color-scheme: dark) {
+          .custom-popup .leaflet-popup-content::after {
+            border-top-color: rgb(31, 41, 55);
+          }
         }
       `}</style>
     </div>
