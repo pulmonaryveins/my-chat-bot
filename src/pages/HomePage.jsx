@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Heart, Sparkles } from 'lucide-react';
+import { Play, Heart, Sparkles, Cat } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import DraggableCards from '../components/DraggableCards';
 import InfiniteMovingCards from '../components/InfiniteMovingCards';
@@ -121,7 +121,7 @@ export default function HomePage() {
             {[
               { icon: Heart, label: 'Memories Preserved', value: 'Forever' },
               { icon: Play, label: 'Always Playing', value: 'On Repeat' },
-              { icon: Sparkles, label: 'Made For', value: 'Newb' }
+              { icon: Cat, label: 'Made For', value: 'Newbie Pransin' }
             ].map((item, index) => (
               <motion.div
                 key={index}

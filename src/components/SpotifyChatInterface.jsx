@@ -187,9 +187,13 @@ export default function SpotifyChatInterface() {
 
                   <div className="space-y-6">
                     <p className="text-gray-300 leading-relaxed text-center">
-                      Welcome back! You can talk to me about anything—share what's on your mind, 
-                      vent about your day, or just say hi. I'm here to listen and support you.
+                      Welcome to Vi-bot, Cyn!
+
+                    Remember when we were eating and watching MSA videos, then you said, “Himo-e daw ko ana” since the video is all about chat-bot. Well… here it is.
                     </p>
+
+                    <p className="text-gray-300 leading-relaxed text-center">
+                    Vi-bot is a chatbot about me—it knows a lot about me and you. Dili pa siya 100% accurate, but he know a lot of things about you. I still need to train it more though. Enjoy po!                    </p>
 
                     {/* Feature Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

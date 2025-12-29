@@ -1,51 +1,44 @@
 /* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, Map, Image, Heart, Sparkles, ChevronRight } from 'lucide-react';
+import { MessageCircle, Map, Image, Heart, Sparkles, ChevronRight, Bug, Cat, PawPrint, Egg, Pickaxe,Angry    } from 'lucide-react';
 
 const messages = [
   {
     id: 1,
-    icon: Heart,
-    title: "Welcome, Cyn",
-    text: "This is a personal space I built just for you—somewhere you can always come back to.",
+    icon: Angry ,
+    title: "Welcome, Newb",
+    text: "How long did it take you to crack the code? I should've made it harder! Anyway, welcome to our special space.",
     color: "from-purple-500 to-pink-500"
   },
   {
     id: 2,
-    icon: MessageCircle,
-    title: "AI Chatbot",
-    text: "Talk to me anytime. I'm here to listen, support you, and chat in both English and Bisaya.",
+    icon: Cat,
+    title: "Project-Prasin",
+    text: "This is one of the projects of \"Project-Pransin\", which is a collection of things dedicated to you, and reminds me of you.",
     color: "from-spotify-green to-emerald-500"
   },
   {
     id: 3,
-    icon: Map,
-    title: "Journey Map",
-    text: "Explore our memories on an interactive map—every place we've been together, marked with love.",
+    icon: Bug,
+    title: "Newbie Bugs",
+    text: "If you find this early, there might be some bugs/errors since this website is still a work in progress. Please bear with me, I'll make updates every week. Actually daghan pa kaayo ko e-add ani na website HAHAHAHAHA",
     color: "from-blue-500 to-cyan-500"
   },
   {
     id: 4,
-    icon: Image,
-    title: "Memory Galleries",
-    text: "Browse through our photos and moments organized in beautiful galleries that tell our story.",
+    icon: Egg,
+    title: "Easter Eggs",
+    text: "There might be some hidden easter eggs throughout the site. Try to find them HAHAHHA (won't go easy on you on this one).",
     color: "from-orange-500 to-red-500"
   },
   {
     id: 5,
-    icon: Sparkles,
-    title: "Always Here",
-    text: "Even when I'm not physically there, this space keeps us connected. You're never alone.",
+    icon: Pickaxe,
+    title: "Explore",
+    text: "Feel free to explore the different sections—Memories, Maps, Chatbot, and more. I still have a lot to add in the future, please do check it from time to time. Enjoy!",
     color: "from-indigo-500 to-purple-600"
   },
-  {
-    id: 6,
-    icon: Heart,
-    title: "Made with Love",
-    text: "Every feature, every detail—built with care for you, Cyn.",
-    color: "from-pink-500 to-rose-600"
-  }
 ];
 
 export default function SwitchingCards() {

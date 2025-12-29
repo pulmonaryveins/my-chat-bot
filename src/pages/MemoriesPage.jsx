@@ -214,7 +214,9 @@ export default function MemoriesPage() {
               >
               </motion.div>
               <p className="text-gray-300 text-lg sm:text-xl leading-relaxed">
-                Each photo captures a moment we shared. They’re memories I’ll always value.
+                Ello, Cyn. This page is a collection of photos that remind me of you—about us. I’ve also included a short message in each category.
+This page is still a work in progress; actually, daghan pa ko’g i-add diri HAHAHAHA—maybe some edits or graphics about you, things like that. Just check it from time to time.
+Enjoy po!
               </p>
               <p className="text-spotify-gray-light text-lg">
               — 🐱

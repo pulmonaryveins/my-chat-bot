@@ -25,7 +25,7 @@ export default function AboutPransinPage() {
       description="WHAT MAKES YOU PRANSIN, ILL MISS EVERYTHING ABOUT YOU :(("
       message="The most amazing person that I have ever met. Everything about you is so special—you’re different from anyone else, you’re truly unique. I love the way you are, Cyn. Mao lisud kayka e-let go (which I will never do HAHAHA sorry, pero I can’t hehe). Please never change, Cyn. You’re already perfect just the way you are.
 
-      I’m very proud of what you’ve accomplished in life, Cyn. I really look up to you—knowing someone who’s living alone in a big city, away from loved ones, yet still managing to survive and be independent, that’s already a huge achievement. I’ll always be proud of you, Cyn—not only me, but everyone who cares for you.
+      I’m very proud of what you’ve accomplished in life, Cyn. I really look up to you—knowing someone who’s living alone in a big city, away from loved ones, yet still managing to survive and be independent, that’s already a huge achievement. I’ll always be proud of you, Cyn—not only me, but everyone who cares for you esp. your mommy Hera.
 
       Please do take care always, Cyn, especially OJT naka. I know it will be tough—1k hours is a lot. That’s why you really need to take care of yourself. Please eat properly, drink tons of water, if maglain na imong lawas, inum dayon ug meds. If dili na kaya, don’t push yourself too much. Please remember to take breaks, and don’t forget to smile—kay dili gud maingon nga si Pransin ka if dili ka mosmile or wala imong energetic side.
 
