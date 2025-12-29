@@ -21,7 +21,13 @@ export default function BoyishPransinPage() {
     <CategoryGallery
       title="Boyish Pransin"
       description="DILI GUD KO MAKA GET OVER SA BOYISH SIDE PRANSIN, I LOVE EVERYSIDE OF YOU COULD BE BOYISH OR GIRLY"
-      message=""
+      message="I know I’ve always talked about how much I love your boyish side, Cyn—and yes, I really do. But the truth is, I love every side of you. No matter which version it is, I love you for who you are.
+
+I don’t love you just because of your beautiful face. I love you because you’re pransin—because you’re yourself. I love the way you don’t sugarcoat things, you’re straightforward, and you stay true to what you believe in. Please never change that. That’s what makes you you. Don’t ever feel the need to change yourself just because others might not like it. I know you won’t anyway, because you always choose what’s best for yourself—and I hope you continue doing that, always.
+
+You always say you’re “maldita,” but you’re really not. I’ve known you for three years now, and you’re the most friendly and loving people I know. You’ve never been “maldita” to me—not even once.
+
+I’ll surely miss this version of you. But always remember this: every version of you is beautiful, my newbie."
       color="from-blue-500 to-cyan-600"
       icon={Heart}
       images={images}

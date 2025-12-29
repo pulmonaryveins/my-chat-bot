@@ -7,6 +7,12 @@ const images = [
   '/featured/moving/m3.png',
   '/featured/moving/m4.png',
   '/featured/moving/m5.png',
+  '/featured/moving/m7.png',
+  '/featured/moving/m8.png',
+  '/featured/moving/m10.png',
+  '/featured/moving/m11.png',
+  '/featured/moving/m13.png',
+
 ];
 
 function MovingCard({ image, index }) {
